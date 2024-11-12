@@ -86,9 +86,12 @@ jobs:
             cp -RT $CLONE_PATH/openwrt/openwrt/package/network/config/firewall4/ $COMPARE_PATH/new/firewall4/
             cp -RT $CLONE_PATH/openwrt/openwrt/package/network/utils/nftables/ $COMPARE_PATH/new/nftables/
             cp -RT $CLONE_PATH/openwrt/openwrt/package/libs/libnftnl/ $COMPARE_PATH/new/libnftnl/
-            cp -RT $CLONE_PATH/chenmozhijin/turboacc/shortcut-fe/package/network/config/firewall4/patches/ $COMPARE_PATH/new/firewall4/patches/
-            cp -RT $CLONE_PATH/chenmozhijin/turboacc/shortcut-fe/package/network/utils/nftables/patches/ $COMPARE_PATH/new/nftables/patches/
-            cp -RT $CLONE_PATH/chenmozhijin/turboacc/shortcut-fe/package/libs/libnftnl/patches/ $COMPARE_PATH/new/libnftnl/patches/
+            FIREWALL4_VERSION=$(grep -o 'FIREWALL4_VERSION=.*' "$CLONE_PATH/chenmozhijin/turboacc/package/version" | cut -d '=' -f 2)
+            LIBNFTNL_VERSION=$(grep -o 'LIBNFTNL_VERSION=.*' "$CLONE_PATH/chenmozhijin/turboacc/package/version" | cut -d '=' -f 2)
+            NFTABLES_VERSION=$(grep -o 'NFTABLES_VERSION=.*' "$CLONE_PATH/chenmozhijin/turboacc/package/version" | cut -d '=' -f 2)
+            cp -RT $CLONE_PATH/chenmozhijin/turboacc/firewall4-$FIREWALL4_VERSION/patches/ $COMPARE_PATH/new/firewall4/patches/
+            cp -RT $CLONE_PATH/chenmozhijin/turboacc/nftables-$LIBNFTNL_VERSION/patches/ $COMPARE_PATH/new/nftables/patches/
+            cp -RT $CLONE_PATH/chenmozhijin/turboacc/libnftnl-$NFTABLES_VERSION/patches/ $COMPARE_PATH/new/libnftnl/patches/
             FIREWALL4_NEW_VERSION=$(grep -o 'PKG_SOURCE_VERSION:=.*' $COMPARE_PATH/new/firewall4/Makefile | cut -d '=' -f 2)
             NFTABLES_NEW_VERSION=$(grep -o 'PKG_VERSION:=.*' $COMPARE_PATH/new/nftables/Makefile | cut -d '=' -f 2)
             LIBNFTNL_NEW_VERSION=$(grep -o 'PKG_VERSION:=.*' $COMPARE_PATH/new/libnftnl/Makefile | cut -d '=' -f 2)
