@@ -19,13 +19,13 @@ jobs:
         compile: [FLOW_OFFLOAD,SHORTCUT_FE,SHORTCUT_FE_CM,SHORTCUT_FE_DRV]
     steps:
           - name: 将存储库签出到运行器
-            uses: actions/checkout@v3
+            uses: actions/checkout@v4
             with:
                 ref: 'luci'
                 path: luci-app-turboacc
 
           - name: 将存储库签出到运行器
-            uses: actions/checkout@v3
+            uses: actions/checkout@v4
             with:
                 ref: 'package'
                 path: turboacc
@@ -246,7 +246,7 @@ jobs:
               cp -rf $(find ./bin/packages/ -type f \( -name "*.ipk" -o -name "*.apk" \)) ./artifact
     
           - name: 上传build artifacts
-            uses: actions/upload-artifact@v3
+            uses: actions/upload-artifact@v4
             with:
               name: packages-${{ matrix.tag_branche }}-${{ matrix.compile }}
               path: ${{ env.OPENWRT_ROOT_PATH }}/artifact/**
@@ -265,7 +265,7 @@ jobs:
     
           - name: 上传日志
             if: success() || failure()
-            uses: actions/upload-artifact@v3
+            uses: actions/upload-artifact@v4
             with:
               name: logs-${{ matrix.tag_branche }}-${{ matrix.compile }}
               path: "${{ env.LOG_PATH }}"

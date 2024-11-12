@@ -20,7 +20,7 @@ jobs:
         - name: 设置时区建立工作文件夹
           run: |
             sudo timedatectl set-timezone "Asia/Shanghai"
-            mkdir -p compare compare/original compare/new clone clone/fullcone-nat-nftables/nft-fullcone clone/wongsyrone/lede-1 clone/coolsnowwolf/lede output/test output/push
+            mkdir -p compare compare/original compare/new clone clone/fullcone-nat-nftables/nft-fullcone clone/coolsnowwolf/lede output/test output/push
             export COMPARE_PATH="$(pwd)/compare"
             export CLONE_PATH="$(pwd)/clone"
             export OUTPUT_PATH="$(pwd)/output"
@@ -35,7 +35,6 @@ jobs:
         - name: 克隆
           run: |
             git clone --depth=1 --single-branch https://github.com/fullcone-nat-nftables/nft-fullcone $CLONE_PATH/fullcone-nat-nftables/nft-fullcone
-            git clone --depth=1 --single-branch https://github.com/wongsyrone/lede-1 $CLONE_PATH/wongsyrone/lede-1
             git clone --depth=1 --single-branch https://github.com/coolsnowwolf/lede $CLONE_PATH/coolsnowwolf/lede
             git clone --depth=1 --single-branch --branch "package" https://github.com/chenmozhijin/turboacc $CLONE_PATH/chenmozhijin/turboacc
             git clone --depth=1 --single-branch --branch "master" https://github.com/openwrt/openwrt/ $CLONE_PATH/openwrt/openwrt/
@@ -87,9 +86,9 @@ jobs:
             cp -RT $CLONE_PATH/openwrt/openwrt/package/network/config/firewall4/ $COMPARE_PATH/new/firewall4/
             cp -RT $CLONE_PATH/openwrt/openwrt/package/network/utils/nftables/ $COMPARE_PATH/new/nftables/
             cp -RT $CLONE_PATH/openwrt/openwrt/package/libs/libnftnl/ $COMPARE_PATH/new/libnftnl/
-            cp -RT $CLONE_PATH/wongsyrone/lede-1/package/network/config/firewall4/patches/ $COMPARE_PATH/new/firewall4/patches/
-            cp -RT $CLONE_PATH/wongsyrone/lede-1/package/network/utils/nftables/patches/ $COMPARE_PATH/new/nftables/patches/
-            cp -RT $CLONE_PATH/wongsyrone/lede-1/package/libs/libnftnl/patches/ $COMPARE_PATH/new/libnftnl/patches/
+            cp -RT $CLONE_PATH/chenmozhijin/turboacc/shortcut-fe/package/network/config/firewall4/patches/ $COMPARE_PATH/new/firewall4/patches/
+            cp -RT $CLONE_PATH/chenmozhijin/turboacc/shortcut-fe/package/network/utils/nftables/patches/ $COMPARE_PATH/new/nftables/patches/
+            cp -RT $CLONE_PATH/chenmozhijin/turboacc/shortcut-fe/package/libs/libnftnl/patches/ $COMPARE_PATH/new/libnftnl/patches/
             FIREWALL4_NEW_VERSION=$(grep -o 'PKG_SOURCE_VERSION:=.*' $COMPARE_PATH/new/firewall4/Makefile | cut -d '=' -f 2)
             NFTABLES_NEW_VERSION=$(grep -o 'PKG_VERSION:=.*' $COMPARE_PATH/new/nftables/Makefile | cut -d '=' -f 2)
             LIBNFTNL_NEW_VERSION=$(grep -o 'PKG_VERSION:=.*' $COMPARE_PATH/new/libnftnl/Makefile | cut -d '=' -f 2)
@@ -164,7 +163,7 @@ jobs:
             tar cvpzf $GITHUB_WORKSPACE/new.tgz *
 
         - name: 上传 文件
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
             name: new
             path: new.tgz
@@ -182,7 +181,7 @@ jobs:
         runs-on: ubuntu-22.04
         steps:
           - name: 下载new
-            uses: actions/download-artifact@v3
+            uses: actions/download-artifact@v4
             with:
                 name: new
 
@@ -252,9 +251,9 @@ jobs:
             working-directory: ${{ env.OPENWRT_ROOT_PATH }}
             run: |
               if [ "${{ matrix.compile }}" = "FLOW_OFFLOAD" ]; then
-                curl -sSL https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/add_turboacc.sh -o add_turboacc.sh && bash add_turboacc.sh --no-sfe
+                curl -sSL https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/add_turboacc.sh -o add_turboacc.sh && bash add_turboacc.sh --no-sfe --local-pkg $TURBOACC_PATH
               else
-                curl -sSL https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/add_turboacc.sh -o add_turboacc.sh && bash add_turboacc.sh
+                curl -sSL https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/add_turboacc.sh -o add_turboacc.sh && bash add_turboacc.sh --local-pkg $TURBOACC_PATH
               fi
               kernel_version="$(sed -n '/CONFIG_LINUX_/p' $OPENWRT_ROOT_PATH/.config | sed -e 's/CONFIG_LINUX_//' -e 's/=y//' -e 's/_/./g')"
               #log
@@ -402,7 +401,7 @@ jobs:
               cp -rf $(find ./bin/packages/ -type f \( -name "*.ipk" -o -name "*.apk" \)) ./artifact
     
           - name: 上传build artifacts
-            uses: actions/upload-artifact@v3
+            uses: actions/upload-artifact@v4
             with:
               name: packages-${{ matrix.tag_branche }}-${{ matrix.compile }}
               path: ${{ env.OPENWRT_ROOT_PATH }}/artifact/**
@@ -421,7 +420,7 @@ jobs:
     
           - name: 上传日志
             if: success() || failure()
-            uses: actions/upload-artifact@v3
+            uses: actions/upload-artifact@v4
             with:
               name: logs-${{ matrix.tag_branche }}-${{ matrix.compile }}
               path: "${{ env.LOG_PATH }}"
@@ -432,13 +431,13 @@ jobs:
         runs-on: ubuntu-22.04
         steps:
           - name: 将存储库签出到运行器
-            uses: actions/checkout@v3
+            uses: actions/checkout@v4
             with:
                 ref: 'package'
                 path: upload
 
           - name: 下载new
-            uses: actions/download-artifact@v3
+            uses: actions/download-artifact@v4
             with:
                 name: new
 
