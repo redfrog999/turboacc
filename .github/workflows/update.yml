@@ -90,8 +90,8 @@ jobs:
             LIBNFTNL_VERSION=$(grep -o 'LIBNFTNL_VERSION=.*' "$CLONE_PATH/chenmozhijin/turboacc/version" | cut -d '=' -f 2)
             NFTABLES_VERSION=$(grep -o 'NFTABLES_VERSION=.*' "$CLONE_PATH/chenmozhijin/turboacc/version" | cut -d '=' -f 2)
             cp -RT $CLONE_PATH/chenmozhijin/turboacc/firewall4-$FIREWALL4_VERSION/firewall4/patches/ $COMPARE_PATH/new/firewall4/patches/
-            cp -RT $CLONE_PATH/chenmozhijin/turboacc/nftables-$LIBNFTNL_VERSION/nftables/patches/ $COMPARE_PATH/new/nftables/patches/
-            cp -RT $CLONE_PATH/chenmozhijin/turboacc/libnftnl-$NFTABLES_VERSION/libnftnl/patches/ $COMPARE_PATH/new/libnftnl/patches/
+            cp -RT $CLONE_PATH/chenmozhijin/turboacc/nftables-$NFTABLES_VERSION/nftables/patches/ $COMPARE_PATH/new/nftables/patches/
+            cp -RT $CLONE_PATH/chenmozhijin/turboacc/libnftnl-$LIBNFTNL_VERSION/libnftnl/patches/ $COMPARE_PATH/new/libnftnl/patches/
             FIREWALL4_NEW_VERSION=$(grep -o 'PKG_SOURCE_VERSION:=.*' $COMPARE_PATH/new/firewall4/Makefile | cut -d '=' -f 2)
             NFTABLES_NEW_VERSION=$(grep -o 'PKG_VERSION:=.*' $COMPARE_PATH/new/nftables/Makefile | cut -d '=' -f 2)
             LIBNFTNL_NEW_VERSION=$(grep -o 'PKG_VERSION:=.*' $COMPARE_PATH/new/libnftnl/Makefile | cut -d '=' -f 2)
