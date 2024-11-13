@@ -358,9 +358,9 @@ jobs:
               toolchain_commit=$(git log --pretty=tformat:"%h" -n1 tools toolchain)
               target=$(sed -n '/^CONFIG_TARGET_BOARD/p' ${{ env.OPENWRT_ROOT_PATH }}/.config | sed -e 's/CONFIG_TARGET_BOARD\=\"//' -e 's/\"//')
               subtarget=$(sed -n '/^CONFIG_TARGET_SUBTARGET/p' ${{ env.OPENWRT_ROOT_PATH }}/.config | sed -e 's/CONFIG_TARGET_SUBTARGET\=\"//' -e 's/\"//')
-              echo "target=$target" >>  >> "$GITHUB_OUTPUT"
-              echo "subtarget=$subtarget" >>  >> "$GITHUB_OUTPUT"
-              echo "toolchain_commit=$toolchain_commit" >>  >> "$GITHUB_OUTPUT"
+              echo "target=$target" >> "$GITHUB_OUTPUT"
+              echo "subtarget=$subtarget" >> "$GITHUB_OUTPUT"
+              echo "toolchain_commit=$toolchain_commit" >> "$GITHUB_OUTPUT"
 
           - name: 缓存toolchain
             uses: actions/cache@v4
