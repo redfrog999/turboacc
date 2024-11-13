@@ -100,14 +100,21 @@ done
 
 cp -r "$TMPDIR/turboacc" "./package/turboacc"
 rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/network/utils/nftables
-if [[ "$VERSION_NUMBER" =~ ^22.03.* ]]; then
-    FIREWALL4_VERSION="7ae5e14bbd7265cc67ec870c3bb0c8e197bb7ca9"
-    LIBNFTNL_VERSION="1.2.1"
-    NFTABLES_VERSION="1.0.2"
-else
+
+FIREWALL4_VERSION=$(grep -o 'PKG_SOURCE_VERSION:=.*' ./package/network/config/firewall4/Makefile | cut -d '=' -f 2)
+NFTABLES_VERSION=$(grep -o 'PKG_VERSION:=.*' ./package/network/utils/nftables/Makefile | cut -d '=' -f 2)
+LIBNFTNL_VERSION=$(grep -o 'PKG_VERSION:=.*' ./package/libs/libnftnl/Makefile | cut -d '=' -f 2)
+if ! [ -d "$TMPDIR/package/firewall4-$FIREWALL4_VERSION"]; then
+    echo "firewall4 version $FIREWALL4_VERSION not found, using latest version"
     FIREWALL4_VERSION=$(grep -o 'FIREWALL4_VERSION=.*' "$TMPDIR/package/version" | cut -d '=' -f 2)
-    LIBNFTNL_VERSION=$(grep -o 'LIBNFTNL_VERSION=.*' "$TMPDIR/package/version" | cut -d '=' -f 2)
+fi
+if ! [ -d "$TMPDIR/package/nftables-$NFTABLES_VERSION"]; then
+    echo "nftables version $NFTABLES_VERSION not found, using latest version"
     NFTABLES_VERSION=$(grep -o 'NFTABLES_VERSION=.*' "$TMPDIR/package/version" | cut -d '=' -f 2)
+fi
+if ! [ -d "$TMPDIR/package/libnftnl-$LIBNFTNL_VERSION"]; then
+    echo "libnftnl version $LIBNFTNL_VERSION not found, using latest version"
+    LIBNFTNL_VERSION=$(grep -o 'LIBNFTNL_VERSION=.*' "$TMPDIR/package/version" | cut -d '=' -f 2)
 fi
 cp -RT "$TMPDIR/package/firewall4-$FIREWALL4_VERSION/firewall4" ./package/network/config/firewall4
 cp -RT "$TMPDIR/package/libnftnl-$LIBNFTNL_VERSION/libnftnl" ./package/libs/libnftnl
