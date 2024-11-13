@@ -192,9 +192,31 @@ jobs:
     #          tar xf toolchain.tar.xz
     #          cp -r ./openwrt-toolchain-*/toolchain-* .
     #          rm -rf ./openwrt-toolchain-*
-              
+
+    
+          - name: 获取信息
+            working-directory: ${{ env.OPENWRT_ROOT_PATH }}
+            id: get-info
+            run: |
+              toolchain_commit=$(git log --pretty=tformat:"%h" -n1 tools toolchain)
+              target=$(sed -n '/^CONFIG_TARGET_BOARD/p' ${{ env.OPENWRT_ROOT_PATH }}/.config | sed -e 's/CONFIG_TARGET_BOARD\=\"//' -e 's/\"//')
+              subtarget=$(sed -n '/^CONFIG_TARGET_SUBTARGET/p' ${{ env.OPENWRT_ROOT_PATH }}/.config | sed -e 's/CONFIG_TARGET_SUBTARGET\=\"//' -e 's/\"//')
+              echo "target=$target" >>  >> "$GITHUB_OUTPUT"
+              echo "subtarget=$subtarget" >>  >> "$GITHUB_OUTPUT"
+              echo "toolchain_commit=$toolchain_commit" >>  >> "$GITHUB_OUTPUT"
+
+          - name: 缓存toolchain
+            uses: actions/cache@v4
+            id: cache-toolchain
+            with:
+              path: |
+                ${{ env.OPENWRT_ROOT_PATH }}/staging_dir/host*
+                ${{ env.OPENWRT_ROOT_PATH }}/staging_dir/tool*
+              key: toolchain-${{ steps.get-info.outputs.toolchain_commit }}-${{ steps.get-info.outputs.target }}-${{ steps.get-info.outputs.subtarget }}
+
           - name: 构建工具
             working-directory: ${{ env.OPENWRT_ROOT_PATH }}
+            if: ${{ steps.cache-toolchain.outputs.cache-hit != 'true' }}
             run: |
               make tools/install -j $(($(nproc)+1)) || make tools/install -j1 V=s
               echo "======================="
@@ -205,6 +227,7 @@ jobs:
       
           - name: 构建工具链
             working-directory: ${{ env.OPENWRT_ROOT_PATH }}
+            if: ${{ steps.cache-toolchain.outputs.cache-hit != 'true' }}
             run: |
               make toolchain/install -j $(($(nproc)+1)) || make toolchain/install -j1 V=s
               echo "======================="
