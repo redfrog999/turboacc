@@ -49,7 +49,7 @@ if [ -d "./package/turboacc" ]; then
 fi
 
 git clone --depth=1 --single-branch https://github.com/fullcone-nat-nftables/nft-fullcone "$TMPDIR/turboacc/nft-fullcone" || exit 1
-
+git clone --depth=1 --single-branch https://github.com/chenmozhijin/turboacc "$TMPDIR/turboacc/turboacc" || exit 1
 if [ -n "$LOCAL_PACKAGE" ]; then
     echo "Using local package: $LOCAL_PACKAGE"
     cp -RT "$LOCAL_PACKAGE" "$TMPDIR/package" || exit 1
@@ -99,20 +99,22 @@ for kernel_version in $kernel_versions; do
 done
 
 cp -r "$TMPDIR/turboacc" "./package/turboacc"
-rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/network/utils/nftables
 
 FIREWALL4_VERSION=$(grep -o 'PKG_SOURCE_VERSION:=.*' ./package/network/config/firewall4/Makefile | cut -d '=' -f 2)
 NFTABLES_VERSION=$(grep -o 'PKG_VERSION:=.*' ./package/network/utils/nftables/Makefile | cut -d '=' -f 2)
 LIBNFTNL_VERSION=$(grep -o 'PKG_VERSION:=.*' ./package/libs/libnftnl/Makefile | cut -d '=' -f 2)
-if ! [ -d "$TMPDIR/package/firewall4-$FIREWALL4_VERSION"]; then
+
+rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/network/utils/nftables
+
+if ! [ -d "$TMPDIR/package/firewall4-$FIREWALL4_VERSION" ]; then
     echo "firewall4 version $FIREWALL4_VERSION not found, using latest version"
     FIREWALL4_VERSION=$(grep -o 'FIREWALL4_VERSION=.*' "$TMPDIR/package/version" | cut -d '=' -f 2)
 fi
-if ! [ -d "$TMPDIR/package/nftables-$NFTABLES_VERSION"]; then
+if ! [ -d "$TMPDIR/package/nftables-$NFTABLES_VERSION" ]; then
     echo "nftables version $NFTABLES_VERSION not found, using latest version"
     NFTABLES_VERSION=$(grep -o 'NFTABLES_VERSION=.*' "$TMPDIR/package/version" | cut -d '=' -f 2)
 fi
-if ! [ -d "$TMPDIR/package/libnftnl-$LIBNFTNL_VERSION"]; then
+if ! [ -d "$TMPDIR/package/libnftnl-$LIBNFTNL_VERSION" ]; then
     echo "libnftnl version $LIBNFTNL_VERSION not found, using latest version"
     LIBNFTNL_VERSION=$(grep -o 'LIBNFTNL_VERSION=.*' "$TMPDIR/package/version" | cut -d '=' -f 2)
 fi
