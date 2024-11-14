@@ -219,9 +219,9 @@ jobs:
     
           - name: 切换标签/分支
             run: |
-              echo "$tag_branche"
+              echo "${{ matrix.tag_branche }}"
               cd $OPENWRT_ROOT_PATH
-              git checkout $tag_branche
+              git checkout "${{ matrix.tag_branche }}"
     
           - name: 修复问题
             working-directory: ${{ env.OPENWRT_ROOT_PATH }}
