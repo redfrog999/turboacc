@@ -15,7 +15,7 @@ jobs:
     check:
         outputs:
             test: ${{ steps.diff.outputs.test }}
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-22.04
         steps:
         - name: 设置时区建立工作文件夹
           run: |
